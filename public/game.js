@@ -22,6 +22,21 @@ window.addEventListener('keyup', (e) => {
     if (e.key in keys) keys[e.key] = false;
 });
 
+function getBiome(x, y) {
+    // World coordinates of player (center of screen)
+    const worldX = x + worldOffsetX;
+    const worldY = y + worldOffsetY;
+
+    if (worldX >= 0 && worldX < 400 && worldY >= 0 && worldY < 400) {
+        return { name: 'grass', color: '#32CD32' };
+    } else if (worldX >= 400 && worldX < 800 && worldY >= 0 && worldY < 400) {
+        return { name: 'snow', color: '#FFFFFF' };
+    } else if (worldX >= 0 && worldX < 400 && worldY >= 400 && worldY < 800) {
+        return { name: 'water', color: '#00B7EB' };
+    }
+    return { name: 'grass', color: '#32CD32' }; // Default
+}
+
 function updatePosition() {
     player.isMoving = false;
 
@@ -56,10 +71,9 @@ function updatePosition() {
 function updateMonsters() {
     monsters.forEach(monster => {
         if (!monster.defeated && monster.type === 'kobold') {
-            // Patrol between x bounds (e.g., 325 to 375)
             monster.x += monster.speed * monster.direction;
-            if (monster.x <= 325) monster.direction = 1; // Move right
-            if (monster.x >= 375) monster.direction = -1; // Move left
+            if (monster.x <= 325) monster.direction = 1;
+            if (monster.x >= 375) monster.direction = -1;
         }
     });
 }
@@ -107,7 +121,10 @@ function checkMonsterCollisions() {
 }
 
 function animate() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const biome = getBiome(player.x, player.y);
+    ctx.fillStyle = biome.color;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
     updatePosition();
     render(ctx, worldOffsetX, worldOffsetY);
     requestAnimationFrame(animate);
