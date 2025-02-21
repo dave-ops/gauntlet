@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pixel Art Render</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        canvas {
+            border: 1px solid #000;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="pixelCanvas"></canvas>
+
+    <script>
+        // Define the pixel art data
+        const newPixelArt = [
+            // Row y=0 (top of sprite, white background)
+            [{ x: 0, y: 0, hexcolor: "#FFFFFF" }, { x: 1, y: 0, hexcolor: "#FFFFFF" }, { x: 2, y: 0, hexcolor: "#FFFFFF" }, { x: 3, y: 0, hexcolor: "#FFFFFF" }, { x: 4, y: 0, hexcolor: "#FFFFFF" }, { x: 5, y: 0, hexcolor: "#FFFFFF" }, { x: 6, y: 0, hexcolor: "#FFFFFF" }, { x: 7, y: 0, hexcolor: "#FFFFFF" }, { x: 8, y: 0, hexcolor: "#FFFFFF" }, { x: 9, y: 0, hexcolor: "#FFFFFF" }, { x: 10, y: 0, hexcolor: "#FFFFFF" }, { x: 11, y: 0, hexcolor: "#FFFFFF" }, { x: 12, y: 0, hexcolor: "#FFFFFF" }, { x: 13, y: 0, hexcolor: "#FFFFFF" }, { x: 14, y: 0, hexcolor: "#FFFFFF" }, { x: 15, y: 0, hexcolor: "#FFFFFF" }],
+            // Row y=1 (black triangle starts)
+            [{ x: 0, y: 1, hexcolor: "#FFFFFF" }, { x: 1, y: 1, hexcolor: "#FFFFFF" }, { x: 2, y: 1, hexcolor: "#FFFFFF" }, { x: 3, y: 1, hexcolor: "#FFFFFF" }, { x: 4, y: 1, hexcolor: "#000000" }, { x: 5, y: 1, hexcolor: "#000000" }, { x: 6, y: 1, hexcolor: "#000000" }, { x: 7, y: 1, hexcolor: "#FFFFFF" }, { x: 8, y: 1, hexcolor: "#FFFFFF" }, { x: 9, y: 1, hexcolor: "#000000" }, { x: 10, y: 1, hexcolor: "#000000" }, { x: 11, y: 1, hexcolor: "#000000" }, { x: 12, y: 1, hexcolor: "#FFFFFF" }, { x: 13, y: 1, hexcolor: "#FFFFFF" }, { x: 14, y: 1, hexcolor: "#FFFFFF" }, { x: 15, y: 1, hexcolor: "#FFFFFF" }],
+            // Row y=2 (black triangle and red band)
+            [{ x: 0, y: 2, hexcolor: "#FFFFFF" }, { x: 1, y: 2, hexcolor: "#FFFFFF" }, { x: 2, y: 2, hexcolor: "#FFFFFF" }, { x: 3, y: 2, hexcolor: "#000000" }, { x: 4, y: 2, hexcolor: "#000000" }, { x: 5, y: 2, hexcolor: "#FFFFFF" }, { x: 6, y: 2, hexcolor: "#FFFFFF" }, { x: 7, y: 2, hexcolor: "#FFFFFF" }, { x: 8, y: 2, hexcolor: "#FFFFFF" }, { x: 9, y: 2, hexcolor: "#FFFFFF" }, { x: 10, y: 2, hexcolor: "#000000" }, { x: 11, y: 2, hexcolor: "#000000" }, { x: 12, y: 2, hexcolor: "#FFFFFF" }, { x: 13, y: 2, hexcolor: "#FFFFFF" }, { x: 14, y: 2, hexcolor: "#FFFFFF" }, { x: 15, y: 2, hexcolor: "#FFFFFF" }],
+            // Row y=3 (red band)
+            [{ x: 0, y: 3, hexcolor: "#FFFFFF" }, { x: 1, y: 3, hexcolor: "#FFFFFF" }, { x: 2, y: 3, hexcolor: "#FFFFFF" }, { x: 3, y: 3, hexcolor: "#FFFFFF" }, { x: 4, y: 3, hexcolor: "#FFFFFF" }, { x: 5, y: 3, hexcolor: "#FFFFFF" }, { x: 6, y: 3, hexcolor: "#FFFFFF" }, { x: 7, y: 3, hexcolor: "#FFFFFF" }, { x: 8, y: 3, hexcolor: "#FFFFFF" }, { x: 9, y: 3, hexcolor: "#FFFFFF" }, { x: 10, y: 3, hexcolor: "#FFFFFF" }, { x: 11, y: 3, hexcolor: "#FFFFFF" }, { x: 12, y: 3, hexcolor: "#FFFFFF" }, { x: 13, y: 3, hexcolor: "#FFFFFF" }, { x: 14, y: 3, hexcolor: "#FFFFFF" }, { x: 15, y: 3, hexcolor: "#FFFFFF" }],
+            // Row y=4 (red band)
+            [{ x: 0, y: 4, hexcolor: "#FFFFFF" }, { x: 1, y: 4, hexcolor: "#FFFFFF" }, { x: 2, y: 4, hexcolor: "#FFFFFF" }, { x: 3, y: 4, hexcolor: "#FFFFFF" }, { x: 4, y: 4, hexcolor: "#FF0000" }, { x: 5, y: 4, hexcolor: "#FF0000" }, { x: 6, y: 4, hexcolor: "#FF0000" }, { x: 7, y: 4, hexcolor: "#FF0000" }, { x: 8, y: 4, hexcolor: "#FF0000" }, { x: 9, y: 4, hexcolor: "#FF0000" }, { x: 10, y: 4, hexcolor: "#FF0000" }, { x: 11, y: 4, hexcolor: "#FF0000" }, { x: 12, y: 4, hexcolor: "#FFFFFF" }, { x: 13, y: 4, hexcolor: "#FFFFFF" }, { x: 14, y: 4, hexcolor: "#FFFFFF" }, { x: 15, y: 4, hexcolor: "#FFFFFF" }],
+            // Rows y=5 to y=30 (empty/transparent, omitted for brevity)
+            // Row y=31 (red bar at bottom)
+            [{ x: 0, y: 31, hexcolor: "#FF0000" }, { x: 1, y: 31, hexcolor: "#FF0000" }, { x: 2, y: 31, hexcolor: "#FF0000" }, { x: 3, y: 31, hexcolor: "#FF0000" }, { x: 4, y: 31, hexcolor: "#FF0000" }, { x: 5, y: 31, hexcolor: "#FF0000" }, { x: 6, y: 31, hexcolor: "#FF0000" }, { x: 7, y: 31, hexcolor: "#FF0000" }, { x: 8, y: 31, hexcolor: "#FF0000" }, { x: 9, y: 31, hexcolor: "#FF0000" }, { x: 10, y: 31, hexcolor: "#FF0000" }, { x: 11, y: 31, hexcolor: "#FF0000" }, { x: 12, y: 31, hexcolor: "#FF0000" }, { x: 13, y: 31, hexcolor: "#FF0000" }, { x: 14, y: 31, hexcolor: "#FF0000" }, { x: 15, y: 31, hexcolor: "#FF0000" }],
+        ];
+
+        // Get the canvas and context
+        const canvas = document.getElementById('pixelCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Set canvas size (16 pixels wide, 32 pixels tall, each pixel is 10x10 for visibility)
+        const pixelSize = 10;
+        canvas.width = 16 * pixelSize;
+        canvas.height = 32 * pixelSize;
+
+        // Draw each pixel
+        newPixelArt.forEach(row => {
+            row.forEach(pixel => {
+                ctx.fillStyle = pixel.hexcolor;
+                ctx.fillRect(pixel.x * pixelSize, pixel.y * pixelSize, pixelSize, pixelSize);
+            });
+        });
+    </script>
+</body>
+</html>

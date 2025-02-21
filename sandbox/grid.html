@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>8x16 Pixel Grid (25x25 Cells, Clickable, with Clear Button)</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        canvas {
+            border: 1px solid #000;
+            cursor: pointer;
+            margin-bottom: 20px; /* Space between grid and button bar */
+        }
+        .button-bar {
+            display: flex;
+            gap: 10px; /* Space between buttons */
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50; /* Green button */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049; /* Darker green on hover */
+        }
+    </style>
+</head>
+<body>
+    <canvas id="pixelGrid"></canvas>
+    <div class="button-bar">
+        <button id="clearButton">Clear</button>
+    </div>
+
+    <script>
+        // Get the canvas and context
+        const canvas = document.getElementById('pixelGrid');
+        const ctx = canvas.getContext('2d');
+
+        // Set canvas size (8x16 grid, each cell is 25x25 pixels, with a 1px black border)
+        const cellSize = 25; // Size of each grid cell in pixels
+        const gridWidth = 9; // 8 cells wide
+        const gridHeight = 17; // 16 cells tall
+        const borderSize = 1; // Black border size in pixels
+
+        // Total canvas size includes the border
+        canvas.width = (gridWidth * cellSize) + (2 * borderSize); // 200 + 2 = 202 pixels wide
+        canvas.height = (gridHeight * cellSize) + (2 * borderSize); // 400 + 2 = 402 pixels tall
+
+        // Initialize a 2D array to track cell colors (true = white, false = dark gray)
+        let gridColors = Array(gridHeight).fill().map(() => Array(gridWidth).fill(true)); // Start with all white (true)
+
+        // Draw the grid
+        function drawGrid() {
+            // Draw the black border
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, canvas.width, borderSize); // Top border
+            ctx.fillRect(0, 0, borderSize, canvas.height); // Left border
+            ctx.fillRect(0, canvas.height - borderSize, canvas.width, borderSize); // Bottom border
+            ctx.fillRect(canvas.width - borderSize, 0, borderSize, canvas.height); // Right border
+
+            // Draw the grid cells
+            for (let y = 0; y < gridHeight; y++) {
+                for (let x = 0; x < gridWidth; x++) {
+                    ctx.fillStyle = gridColors[y][x] ? '#FFFFFF' : '#333333'; // White or dark gray
+                    ctx.fillRect(borderSize + (x * cellSize), borderSize + (y * cellSize), cellSize, cellSize);
+                }
+            }
+
+            // Draw the grid lines (black, 1px wide)
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 1;
+
+            // Vertical lines
+            for (let x = borderSize; x <= gridWidth * cellSize + borderSize; x += cellSize) {
+                ctx.beginPath();
+                ctx.moveTo(x, borderSize);
+                ctx.lineTo(x, gridHeight * cellSize + borderSize);
+                ctx.stroke();
+            }
+
+            // Horizontal lines
+            for (let y = borderSize; y <= gridHeight * cellSize + borderSize; y += cellSize) {
+                ctx.beginPath();
+                ctx.moveTo(borderSize, y);
+                ctx.lineTo(gridWidth * cellSize + borderSize, y);
+                ctx.stroke();
+            }
+        }
+
+        // Handle canvas clicks
+        canvas.addEventListener('click', (event) => {
+            // Get the click position relative to the canvas
+            const rect = canvas.getBoundingClientRect();
+            const x = event.clientX - rect.left - borderSize;
+            const y = event.clientY - rect.top - borderSize;
+
+            // Calculate the grid cell clicked (accounting for cell size)
+            const cellX = Math.floor(x / cellSize);
+            const cellY = Math.floor(y / cellSize);
+
+            // Ensure the click is within the grid
+            if (cellX >= 0 && cellX < gridWidth && cellY >= 0 && cellY < gridHeight) {
+                // Toggle the color (true -> false, false -> true)
+                gridColors[cellY][cellX] = !gridColors[cellY][cellX];
+                drawGrid(); // Redraw the grid with the updated color
+            }
+        });
+
+        // Handle clear button click
+        document.getElementById('clearButton').addEventListener('click', () => {
+            // Reset all cells to white (true)
+            gridColors = Array(gridHeight).fill().map(() => Array(gridWidth).fill(true));
+            drawGrid(); // Redraw the grid with all white cells
+        });
+
+        // Initial draw
+        drawGrid();
+    </script>
+</body>
+</html>
