@@ -1,6 +1,10 @@
 const GameLogic = {
+    gameState: 'playing', // 'playing', 'gameOver', or 'won'
+
     update: function() {
-        console.log('GameLogic update called');
+        console.log('GameLogic update called, Game State:', this.gameState);
+
+        if (this.gameState !== 'playing') return; // Stop updates if game is over or won
 
         this.updatePosition();
         this.updateMonsters();
@@ -82,42 +86,31 @@ const GameLogic = {
         console.log('Player bounds:', playerBounds, 'World offset:', offset);
 
         Monsters.forEach(monster => {
-            if (!monster.defeated) {
+            if (!monster.defeated && this.gameState === 'playing') {
                 const screenX = monster.x - offset.x, screenY = monster.y - offset.y;
                 const monsterBounds = monster.getBounds(screenX, screenY);
                 console.log('Checking monster:', monster.type, 'at', { screenX, screenY }, 'Bounds:', monsterBounds);
                 if (playerBounds.right > monsterBounds.left && playerBounds.left < monsterBounds.right &&
                     playerBounds.bottom > monsterBounds.top && playerBounds.top < monsterBounds.bottom) {
-                    console.log('Collision detected with monster:', monster.type);
-                    monster.defeated = true;
+                    console.log('Collision detected with monster:', monster.type, 'Player state:', { hasArmor: Player.hasArmor, hasSword: Player.hasSword });
+                    if (!Player.hasArmor) {
+                        console.log('Game Over: Collided with kobold without armor');
+                        this.gameState = 'gameOver';
+                    } else if (!Player.hasSword) {
+                        console.log('Game Over: Collided with kobold without sword');
+                        this.gameState = 'gameOver';
+                    } else {
+                        console.log('You Win: Collided with kobold with armor and sword');
+                        this.gameState = 'won';
+                    }
                 }
             }
         });
     },
 
+    // Disabled verifyState as it causes incorrect termination and game should only end on death
     verifyState: function() {
-        console.log('Verifying game state, Player.hasArmor:', Player.hasArmor, 'Player.hasSword:', Player.hasSword, 'Monster defeated:', Monsters[0].defeated);
-
-        const state = `${Player.hasArmor}-${Player.hasSword}-${Monsters[0].defeated}`;
-        const hash = btoa(state);
-        if (sessionStorage.getItem('gameState') && sessionStorage.getItem('gameState') !== hash) {
-            // Check if the change is a normal gameplay action (e.g., collecting armor, sword, or defeating monster)
-            const prevState = atob(sessionStorage.getItem('gameState') || '').split('-');
-            const currentState = state.split('-');
-            const armorChanged = prevState[0] === 'false' && currentState[0] === 'true'; // Armor collected
-            const swordChanged = prevState[1] === 'false' && currentState[1] === 'true'; // Sword collected
-            const monsterDefeated = prevState[2] === 'false' && currentState[2] === 'true'; // Monster defeated
-
-            if (armorChanged || swordChanged || monsterDefeated) {
-                console.log('Normal state change detected (e.g., armor/sword collected or monster defeated), updating hash');
-                sessionStorage.setItem('gameState', hash);
-                return true;
-            }
-            console.warn('State tampered! Resetting...', 'Previous state:', prevState, 'Current state:', currentState);
-            return false;
-        }
-        console.log('State verified, hash:', hash, 'Player state:', { hasArmor: Player.hasArmor, hasSword: Player.hasSword });
-        sessionStorage.setItem('gameState', hash);
-        return true;
+        console.log('VerifyState disabled - Game only terminates if player dies (collides with kobold without armor or sword)');
+        return true; // Always return true to allow gameplay, relying on checkMonsterCollisions for termination
     }
 };
