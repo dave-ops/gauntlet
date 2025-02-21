@@ -1,13 +1,37 @@
-const items = [
-    { type: 'armor', x: 300, y: 100, collected: false },
-    { type: 'sword', x: 450, y: 200, collected: false }
-];
+const items = (function() {
+    let i = [
+        { t: 'a', x: 300, y: 100, c: false },
+        { t: 's', x: 450, y: 200, c: false }
+    ];
+    return i.map(it => ({
+        t: it.t,
+        x: it.x,
+        y: it.y,
+        get c() { return it.c; },
+        set c(v) { it.c = v; },
+        gB: (sx, sy) => it.t === 'a' ? { l: sx - 12, r: sx + 12, t: sy - 10, b: sy + 15 } : { l: sx - 5, r: sx + 20, t: sy - 5, b: sy + 5 }
+    }));
+})();
 
-const monsters = [
-    { type: 'kobold', x: 350, y: 300, defeated: false, speed: 1, direction: 1 }
-];
+const monsters = (function() {
+    let m = [
+        { t: 'k', x: 350, y: 300, d: false, s: 1, dn: 1 }
+    ];
+    return m.map(mn => ({
+        t: mn.t,
+        get x() { return mn.x; },
+        set x(v) { mn.x = v; },
+        y: mn.y,
+        get d() { return mn.d; },
+        set d(v) { mn.d = v; },
+        s: mn.s,
+        get dn() { return mn.dn; },
+        set dn(v) { mn.dn = v; },
+        gB: (sx, sy) => ({ l: sx - 15, r: sx + 20, t: sy - 20, b: sy + 35 })
+    }));
+})();
 
-function drawArmorItem(ctx, x, y) {
+function dAI(ctx, x, y) {
     ctx.beginPath();
     ctx.moveTo(x - 10, y - 10);
     ctx.lineTo(x + 10, y - 10);
@@ -29,10 +53,10 @@ function drawArmorItem(ctx, x, y) {
     ctx.closePath();
 }
 
-function drawSword(ctx, x, y, angle) {
+function dS(ctx, x, y, a) {
     ctx.save();
     ctx.translate(x, y);
-    ctx.rotate(angle);
+    ctx.rotate(a);
     ctx.beginPath();
     ctx.moveTo(0, 0);
     ctx.lineTo(20, 0);
@@ -47,7 +71,7 @@ function drawSword(ctx, x, y, angle) {
     ctx.restore();
 }
 
-function drawKobold(ctx, x, y) {
+function dK(ctx, x, y) {
     ctx.beginPath();
     ctx.ellipse(x, y - 10, 8, 10, 0, 0, Math.PI * 2);
     ctx.fillStyle = '#8B4513';
@@ -96,21 +120,3 @@ function drawKobold(ctx, x, y) {
     ctx.stroke();
     ctx.closePath();
 }
-
-items.forEach(item => {
-    item.getBounds = (screenX, screenY) => {
-        if (item.type === 'armor') {
-            return { left: screenX - 12, right: screenX + 12, top: screenY - 10, bottom: screenY + 15 };
-        } else if (item.type === 'sword') {
-            return { left: screenX - 5, right: screenX + 20, top: screenY - 5, bottom: screenY + 5 };
-        }
-    };
-});
-
-monsters.forEach(monster => {
-    monster.getBounds = (screenX, screenY) => {
-        if (monster.type === 'kobold') {
-            return { left: screenX - 15, right: screenX + 20, top: screenY - 20, bottom: screenY + 35 };
-        }
-    };
-});

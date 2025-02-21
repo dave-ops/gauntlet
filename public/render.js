@@ -1,46 +1,30 @@
-function render(ctx, worldOffsetX, worldOffsetY, specks) {
-    // Draw specks
-    specks.forEach(speck => {
-        const screenX = speck.x - worldOffsetX;
-        const screenY = speck.y - worldOffsetY;
-        // Only draw if on-screen
-        if (screenX >= 0 && screenX < canvas.width && screenY >= 0 && screenY < canvas.height) {
+function r(ctx, ox, oy, s) {
+    s.forEach(sp => {
+        const sx = sp.x - ox, sy = sp.y - oy;
+        if (sx >= 0 && sx < canvas.width && sy >= 0 && sy < canvas.height) {
             ctx.beginPath();
-            ctx.arc(screenX, screenY, 2, 0, Math.PI * 2); // Small dots
-            ctx.fillStyle = speck.color;
+            ctx.arc(sx, sy, 2, 0, Math.PI * 2);
+            ctx.fillStyle = sp.c;
             ctx.fill();
             ctx.closePath();
         }
     });
 
-    // Draw items
-    items.forEach(item => {
-        if (!item.collected) {
-            const screenX = item.x - worldOffsetX;
-            const screenY = item.y - worldOffsetY;
-            if (item.type === 'armor') {
-                drawArmorItem(ctx, screenX, screenY);
-            } else if (item.type === 'sword') {
-                drawSword(ctx, screenX, screenY, 0);
-            }
+    items.forEach(i => {
+        if (!i.c) {
+            const sx = i.x - ox, sy = i.y - oy;
+            if (i.t === 'a') dAI(ctx, sx, sy);
+            else if (i.t === 's') dS(ctx, sx, sy, 0);
         }
     });
 
-    // Draw monsters
-    monsters.forEach(monster => {
-        if (!monster.defeated) {
-            const screenX = monster.x - worldOffsetX;
-            const screenY = monster.y - worldOffsetY;
-            if (monster.type === 'kobold') {
-                drawKobold(ctx, screenX, screenY);
-            }
+    monsters.forEach(m => {
+        if (!m.d) {
+            const sx = m.x - ox, sy = m.y - oy;
+            if (m.t === 'k') dK(ctx, sx, sy);
         }
     });
 
-    // Draw player
-    if (player.hasArmor) {
-        drawArmorSprite(ctx, player.x, player.y);
-    } else {
-        drawPerson(ctx, player.x, player.y);
-    }
+    if (player.hA) dA(ctx, player.x, player.y);
+    else dP(ctx, player.x, player.y);
 }
