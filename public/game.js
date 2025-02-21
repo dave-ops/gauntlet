@@ -22,8 +22,19 @@ window.addEventListener('keyup', (e) => {
     if (e.key in keys) keys[e.key] = false;
 });
 
+// Generate specks across the world
+const specks = [];
+for (let i = 0; i < 200; i++) { // 200 specks for density
+    const x = Math.random() * 800; // World size: 0-800
+    const y = Math.random() * 800;
+    let color;
+    if (x < 400 && y < 400) color = '#228B22'; // Darker green for grass
+    else if (x >= 400 && x < 800 && y < 400) color = '#F0F0F0'; // Light gray for snow
+    else if (x < 400 && y >= 400) color = '#4682B4'; // Steel blue for water
+    specks.push({ x, y, color });
+}
+
 function getBiome(x, y) {
-    // World coordinates of player (center of screen)
     const worldX = x + worldOffsetX;
     const worldY = y + worldOffsetY;
 
@@ -34,7 +45,7 @@ function getBiome(x, y) {
     } else if (worldX >= 0 && worldX < 400 && worldY >= 400 && worldY < 800) {
         return { name: 'water', color: '#00B7EB' };
     }
-    return { name: 'grass', color: '#32CD32' }; // Default
+    return { name: 'grass', color: '#32CD32' };
 }
 
 function updatePosition() {
@@ -126,7 +137,7 @@ function animate() {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     updatePosition();
-    render(ctx, worldOffsetX, worldOffsetY);
+    render(ctx, worldOffsetX, worldOffsetY, specks);
     requestAnimationFrame(animate);
 }
 

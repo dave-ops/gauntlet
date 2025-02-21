@@ -1,4 +1,18 @@
-function render(ctx, worldOffsetX, worldOffsetY) {
+function render(ctx, worldOffsetX, worldOffsetY, specks) {
+    // Draw specks
+    specks.forEach(speck => {
+        const screenX = speck.x - worldOffsetX;
+        const screenY = speck.y - worldOffsetY;
+        // Only draw if on-screen
+        if (screenX >= 0 && screenX < canvas.width && screenY >= 0 && screenY < canvas.height) {
+            ctx.beginPath();
+            ctx.arc(screenX, screenY, 2, 0, Math.PI * 2); // Small dots
+            ctx.fillStyle = speck.color;
+            ctx.fill();
+            ctx.closePath();
+        }
+    });
+
     // Draw items
     items.forEach(item => {
         if (!item.collected) {
