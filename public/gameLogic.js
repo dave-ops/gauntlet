@@ -97,9 +97,11 @@ const GameLogic = {
                     if (!Player.hasArmor) {
                         console.log('Game Over: Collided with kobold without armor');
                         this.gameState = 'gameOver';
+                        MusicPlayer.stopAllMusic(); // Stop all music on game over
                     } else if (!Player.hasSword) {
                         console.log('Game Over: Collided with kobold without sword');
                         this.gameState = 'gameOver';
+                        MusicPlayer.stopAllMusic(); // Stop all music on game over
                     } else {
                         console.log('You Win: Collided with kobold with armor and sword');
                         this.gameState = 'won';
