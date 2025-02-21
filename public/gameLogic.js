@@ -1,4 +1,3 @@
-// Remove closure, make GameLogic global
 const GameLogic = {
     update: function() {
         console.log('GameLogic update called');
@@ -54,13 +53,21 @@ const GameLogic = {
                 console.log('Checking item:', item.type, 'at', { screenX, screenY }, 'Bounds:', itemBounds);
                 if (playerBounds.right > itemBounds.left && playerBounds.left < itemBounds.right &&
                     playerBounds.bottom > itemBounds.top && playerBounds.top < itemBounds.bottom) {
-                    console.log('Collision detected with item:', item.type);
+                    console.log('Collision detected with item:', item.type, 'before collection');
                     if ((item.type === 'armor' && Math.abs(item.x - (Player.x + offset.x)) < 50) || 
                         (item.type === 'sword' && Math.abs(item.x - (Player.x + offset.x)) < 50)) {
                         item.collected = true;
-                        if (item.type === 'armor') Player.hasArmor = true;
-                        if (item.type === 'sword') Player.hasSword = true;
-                        console.log('Item collected:', item.type);
+                        if (item.type === 'armor') {
+                            console.log('Attempting to set Player.hasArmor to true');
+                            Player.hasArmor = true;
+                            console.log('Player.hasArmor set to:', Player.hasArmor);
+                        }
+                        if (item.type === 'sword') {
+                            console.log('Attempting to set Player.hasSword to true');
+                            Player.hasSword = true;
+                            console.log('Player.hasSword set to:', Player.hasSword);
+                        }
+                        console.log('Item collected:', item.type, 'Player state:', { hasArmor: Player.hasArmor, hasSword: Player.hasSword });
                     }
                 }
             }
@@ -89,16 +96,28 @@ const GameLogic = {
     },
 
     verifyState: function() {
-        console.log('Verifying game state');
+        console.log('Verifying game state, Player.hasArmor:', Player.hasArmor, 'Player.hasSword:', Player.hasSword, 'Monster defeated:', Monsters[0].defeated);
 
         const state = `${Player.hasArmor}-${Player.hasSword}-${Monsters[0].defeated}`;
         const hash = btoa(state);
         if (sessionStorage.getItem('gameState') && sessionStorage.getItem('gameState') !== hash) {
-            console.warn('State tampered! Resetting...');
+            // Check if the change is a normal gameplay action (e.g., collecting armor, sword, or defeating monster)
+            const prevState = atob(sessionStorage.getItem('gameState') || '').split('-');
+            const currentState = state.split('-');
+            const armorChanged = prevState[0] === 'false' && currentState[0] === 'true'; // Armor collected
+            const swordChanged = prevState[1] === 'false' && currentState[1] === 'true'; // Sword collected
+            const monsterDefeated = prevState[2] === 'false' && currentState[2] === 'true'; // Monster defeated
+
+            if (armorChanged || swordChanged || monsterDefeated) {
+                console.log('Normal state change detected (e.g., armor/sword collected or monster defeated), updating hash');
+                sessionStorage.setItem('gameState', hash);
+                return true;
+            }
+            console.warn('State tampered! Resetting...', 'Previous state:', prevState, 'Current state:', currentState);
             return false;
         }
+        console.log('State verified, hash:', hash, 'Player state:', { hasArmor: Player.hasArmor, hasSword: Player.hasSword });
         sessionStorage.setItem('gameState', hash);
-        console.log('State verified, hash:', hash);
         return true;
     }
 };
