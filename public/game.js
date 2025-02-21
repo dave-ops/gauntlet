@@ -22,15 +22,40 @@ window.addEventListener('keyup', (e) => {
     if (e.key in keys) keys[e.key] = false;
 });
 
-// Generate specks across the world
+// Audio setup
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+let lastStepTime = 0;
+const stepCooldown = 200; // ms between steps
+
+function playStepSound() {
+    const now = Date.now();
+    if (now - lastStepTime < stepCooldown) return; // Prevent spam
+
+    const oscillator = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+
+    oscillator.type = 'square'; // Retro step sound
+    oscillator.frequency.setValueAtTime(100, audioCtx.currentTime); // Low pitch
+    gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime); // Quiet volume
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+
+    oscillator.start();
+    oscillator.stop(audioCtx.currentTime + 0.05); // 50ms duration
+
+    lastStepTime = now;
+}
+
+// Generate specks
 const specks = [];
-for (let i = 0; i < 200; i++) { // 200 specks for density
-    const x = Math.random() * 800; // World size: 0-800
+for (let i = 0; i < 200; i++) {
+    const x = Math.random() * 800;
     const y = Math.random() * 800;
     let color;
-    if (x < 400 && y < 400) color = '#228B22'; // Darker green for grass
-    else if (x >= 400 && x < 800 && y < 400) color = '#F0F0F0'; // Light gray for snow
-    else if (x < 400 && y >= 400) color = '#4682B4'; // Steel blue for water
+    if (x < 400 && y < 400) color = '#228B22';
+    else if (x >= 400 && x < 800 && y < 400) color = '#F0F0F0';
+    else if (x < 400 && y >= 400) color = '#4682B4';
     specks.push({ x, y, color });
 }
 
@@ -70,6 +95,7 @@ function updatePosition() {
 
     if (player.isMoving) {
         player.legAngle += 0.2;
+        playStepSound(); // Play sound when moving
     } else {
         player.legAngle = Math.sin(player.legAngle) * 0.1;
     }
