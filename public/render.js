@@ -22,9 +22,11 @@ function render(ctx, offsetX, offsetY, specks) {
         if (!monster.defeated) {
             const screenX = monster.x - offsetX, screenY = monster.y - offsetY;
             if (monster.type === 'kobold') drawKobold(ctx, screenX, screenY);
+            if (monster.type === 'troglodyte') drawTroglodyte(ctx, screenX, screenY);
         }
     });
 
     if (Player.hasArmor) drawArmoredPlayer(ctx, Player.x, Player.y);
     else drawStickFigure(ctx, Player.x, Player.y);
 }
+

@@ -16,7 +16,6 @@ const entityRenderer = {
         specks.forEach(speck => {
             const screenX = speck.x - offsetX, screenY = speck.y - offsetY;
             if (screenX >= 0 && screenX < 800 && screenY >= 0 && screenY < 800) {
-                console.log('EntityRenderer: Rendering speck at:', { screenX, screenY });
                 ctx.beginPath();
                 ctx.arc(screenX, screenY, 2, 0, Math.PI * 2); // Fixed speck size
                 ctx.fillStyle = speck.color;
