@@ -1,20 +1,20 @@
-const player = (function() {
-    let p = { x: 200, y: 200, lA: 0, m: false, hA: false, hS: false };
+const Player = (function() {
+    let state = { x: 200, y: 200, legAngle: 0, isMoving: false, hasArmor: false, hasSword: false };
     return {
-        x: p.x, // Read-only
-        y: p.y,
-        get lA() { return p.lA; },
-        set lA(v) { p.lA = v; },
-        get m() { return p.m; },
-        set m(v) { p.m = v; },
-        get hA() { return p.hA; },
-        set hA(v) { p.hA = v; },
-        get hS() { return p.hS; },
-        set hS(v) { p.hS = v; }
+        x: state.x,
+        y: state.y,
+        get legAngle() { return state.legAngle; },
+        set legAngle(v) { state.legAngle = v; },
+        get isMoving() { return state.isMoving; },
+        set isMoving(v) { state.isMoving = v; },
+        get hasArmor() { return state.hasArmor; },
+        set hasArmor(v) { state.hasArmor = v; },
+        get hasSword() { return state.hasSword; },
+        set hasSword(v) { state.hasSword = v; }
     };
 })();
 
-function dP(ctx, x, y) {
+function drawStickFigure(ctx, x, y) {
     ctx.beginPath();
     ctx.arc(x, y, 10, 0, Math.PI * 2);
     ctx.fillStyle = '#FFD700';
@@ -32,27 +32,28 @@ function dP(ctx, x, y) {
     ctx.beginPath();
     ctx.moveTo(x - 15, y + 20);
     ctx.lineTo(x + 15, y + 20);
-    if (player.hS) {
+    if (Player.hasSword) {
         ctx.lineTo(x + 25, y + 30);
         drawSword(ctx, x + 25, y + 30, Math.PI / 4);
     }
     ctx.stroke();
     ctx.closePath();
 
-    const lb = y + 40, ll = 20, ms = 10;
-    let llx = x - ms * Math.sin(player.lA), rlx = x + ms * Math.sin(player.lA);
-    let lly = lb + ll, rly = lb + ll;
+    const legBaseY = y + 40, legLength = 20, maxSwing = 10;
+    let leftLegX = x - maxSwing * Math.sin(Player.legAngle);
+    let rightLegX = x + maxSwing * Math.sin(Player.legAngle);
+    let leftLegY = legBaseY + legLength, rightLegY = legBaseY + legLength;
 
     ctx.beginPath();
-    ctx.moveTo(x, lb);
-    ctx.lineTo(llx, lly);
-    ctx.moveTo(x, lb);
-    ctx.lineTo(rlx, rly);
+    ctx.moveTo(x, legBaseY);
+    ctx.lineTo(leftLegX, leftLegY);
+    ctx.moveTo(x, legBaseY);
+    ctx.lineTo(rightLegX, rightLegY);
     ctx.stroke();
     ctx.closePath();
 }
 
-function dA(ctx, x, y) {
+function drawArmoredPlayer(ctx, x, y) {
     ctx.beginPath();
     ctx.moveTo(x - 12, y - 15);
     ctx.lineTo(x + 12, y - 15);
@@ -83,29 +84,31 @@ function dA(ctx, x, y) {
     ctx.stroke();
     ctx.closePath();
 
-    const ab = y + 20, al = 18, as = 5;
-    let lax = x - al + as * Math.sin(player.lA), rax = x + al - as * Math.sin(player.lA);
+    const armBaseY = y + 20, armLength = 18, armSwing = 5;
+    let leftArmX = x - armLength + armSwing * Math.sin(Player.legAngle);
+    let rightArmX = x + armLength - armSwing * Math.sin(Player.legAngle);
 
     ctx.beginPath();
-    ctx.moveTo(x - 15, ab);
-    ctx.lineTo(lax, ab + 10);
-    ctx.moveTo(x + 15, ab);
-    ctx.lineTo(rax, ab + 10);
-    if (player.hS) drawSword(ctx, rax, ab + 10, Math.PI / 4);
+    ctx.moveTo(x - 15, armBaseY);
+    ctx.lineTo(leftArmX, armBaseY + 10);
+    ctx.moveTo(x + 15, armBaseY);
+    ctx.lineTo(rightArmX, armBaseY + 10);
+    if (Player.hasSword) drawSword(ctx, rightArmX, armBaseY + 10, Math.PI / 4);
     ctx.lineWidth = 4;
     ctx.strokeStyle = '#A9A9A9';
     ctx.stroke();
     ctx.closePath();
 
-    const lb = y + 40, ll = 25, ms = 12;
-    let llx = x - ms * Math.sin(player.lA), rlx = x + ms * Math.sin(player.lA);
-    let lly = lb + ll, rly = lb + ll;
+    const legBaseY = y + 40, legLength = 25, maxSwing = 12;
+    let leftLegX = x - maxSwing * Math.sin(Player.legAngle);
+    let rightLegX = x + maxSwing * Math.sin(Player.legAngle);
+    let leftLegY = legBaseY + legLength, rightLegY = legBaseY + legLength;
 
     ctx.beginPath();
-    ctx.moveTo(x - 10, lb);
-    ctx.lineTo(llx, lly);
-    ctx.moveTo(x + 10, lb);
-    ctx.lineTo(rlx, rly);
+    ctx.moveTo(x - 10, legBaseY);
+    ctx.lineTo(leftLegX, leftLegY);
+    ctx.moveTo(x + 10, legBaseY);
+    ctx.lineTo(rightLegX, rightLegY);
     ctx.lineWidth = 6;
     ctx.strokeStyle = '#A9A9A9';
     ctx.stroke();

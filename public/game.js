@@ -65,18 +65,18 @@ window.addEventListener('keydown', e => { if (e.key in k) k[e.key] = true; });
 window.addEventListener('keyup', e => { if (e.key in k) k[e.key] = false; });
 
 function upd() {
-    player.m = false;
+    Player.m = false;
 
-    if (k.ArrowUp) { gameCore.uO(0, -gameCore.spd); player.m = true; }
-    if (k.ArrowDown) { gameCore.uO(0, gameCore.spd); player.m = true; }
-    if (k.ArrowLeft) { gameCore.uO(-gameCore.spd, 0); player.m = true; }
-    if (k.ArrowRight) { gameCore.uO(gameCore.spd, 0); player.m = true; }
+    if (k.ArrowUp) { gameCore.uO(0, -gameCore.spd); Player.m = true; }
+    if (k.ArrowDown) { gameCore.uO(0, gameCore.spd); Player.m = true; }
+    if (k.ArrowLeft) { gameCore.uO(-gameCore.spd, 0); Player.m = true; }
+    if (k.ArrowRight) { gameCore.uO(gameCore.spd, 0); Player.m = true; }
 
-    if (player.m) {
-        player.lA += 0.2;
+    if (Player.m) {
+        Player.lA += 0.2;
         gameCore.pS();
     } else {
-        player.lA = Math.sin(player.lA) * 0.1;
+        Player.lA = Math.sin(Player.lA) * 0.1;
     }
 
     updM();
@@ -95,7 +95,7 @@ function updM() {
 }
 
 function chkC() {
-    const pB = { l: player.x - 15, r: player.x + 15, t: player.y - 10, b: player.y + 60 };
+    const pB = { l: Player.x - 15, r: Player.x + 15, t: Player.y - 10, b: Player.y + 60 };
     const o = gameCore.gO();
 
     items.forEach(i => {
@@ -103,11 +103,11 @@ function chkC() {
             const sx = i.x - o.x, sy = i.y - o.y;
             const iB = i.gB(sx, sy);
             if (pB.r > iB.l && pB.l < iB.r && pB.b > iB.t && pB.t < iB.b) {
-                if ((i.t === 'a' && Math.abs(i.x - (player.x + o.x)) < 50) || 
-                    (i.t === 's' && Math.abs(i.x - (player.x + o.x)) < 50)) {
+                if ((i.t === 'a' && Math.abs(i.x - (Player.x + o.x)) < 50) || 
+                    (i.t === 's' && Math.abs(i.x - (Player.x + o.x)) < 50)) {
                     i.c = true;
-                    if (i.t === 'a') player.hA = true;
-                    if (i.t === 's') player.hS = true;
+                    if (i.t === 'a') Player.hA = true;
+                    if (i.t === 's') Player.hS = true;
                 }
             }
         }
@@ -115,7 +115,7 @@ function chkC() {
 }
 
 function chkMC() {
-    const pB = { l: player.x - 15, r: player.x + 15, t: player.y - 10, b: player.y + 60 };
+    const pB = { l: Player.x - 15, r: Player.x + 15, t: Player.y - 10, b: Player.y + 60 };
     const o = gameCore.gO();
 
     monsters.forEach(m => {
@@ -130,15 +130,15 @@ function chkMC() {
 }
 
 function anim() {
-    if (!gameCore.vS(player, items, monsters)) return; // Stop if tampered
+    if (!gameCore.vS(Player, items, monsters)) return; // Stop if tampered
 
-    const b = gameCore.gB(player.x, player.y);
+    const b = gameCore.gB(Player.x, Player.y);
     ctx.fillStyle = b.c;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     upd();
     const o = gameCore.gO();
-    r(ctx, o.x, o.y, gameCore.gS()); // Changed from 'render' to 'r'
+    r(ctx, o.x, o.y, gameCore.gS());
     requestAnimationFrame(anim);
 }
 
