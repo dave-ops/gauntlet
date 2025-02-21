@@ -72,6 +72,7 @@ const GameLogic = {
                             console.log('Player.hasSword set to:', Player.hasSword);
                         }
                         console.log('Item collected:', item.type, 'Player state:', { hasArmor: Player.hasArmor, hasSword: Player.hasSword });
+                        MusicPlayer.playMusicCollection('victory'); // Play victory music on item collection
                     }
                 }
             }

@@ -1,7 +1,7 @@
 // music.js
 const MusicPlayer = (function() {
     let audioCtx = null;
-    let isPlaying = false;
+    let isPlaying = {};
 
     // Note object to represent a single beep or boop
     function Note(frequency, duration, type = 'square') {
@@ -33,42 +33,68 @@ const MusicPlayer = (function() {
         oscillator.stop(ctx.currentTime + note.duration);
     }
 
-    // Create a music collection (array of Note objects) for an adventuring tune
-    const adventureMusicCollection = [
-        new Note(440, 0.2, 'square'),  // A4 (short beep)
-        new Note(523, 0.2, 'square'),  // C5 (short beep)
-        new Note(659, 0.2, 'square'),  // E5 (short beep)
-        new Note(784, 0.2, 'square'),  // G5 (short beep)
-        new Note(659, 0.4, 'square'),  // E5 (longer beep)
-        new Note(523, 0.2, 'square'),  // C5 (short beep)
-        new Note(440, 0.6, 'square')   // A4 (longer beep)
-    ];
+    // Base music collections (scalable for future additions)
+    const musicCollections = {
+        adventure: [
+            new Note(440, 0.2, 'square'),  // A4
+            new Note(523, 0.2, 'square'),  // C5
+            new Note(659, 0.2, 'square'),  // E5
+            new Note(784, 0.2, 'square'),  // G5
+            new Note(659, 0.4, 'square'),  // E5 (longer)
+            new Note(523, 0.2, 'square'),  // C5
+            new Note(440, 0.6, 'square')   // A4 (longer)
+        ],
+        victory: [
+            new Note(880, 0.3, 'square'),  // A5 (high, triumphant beep)
+            new Note(1046, 0.3, 'square'), // C6 (higher beep)
+            new Note(1318, 0.3, 'triangle'), // E6 (smooth, rising tone)
+            new Note(1568, 0.5, 'square'), // G6 (long, victorious note)
+            new Note(1318, 0.3, 'triangle') // E6 (smooth finish)
+        ]
+        // Add more collections (e.g., defeat, level-up) here for scalability
+    };
 
-    function playMusicCollection(collection) {
-        if (isPlaying) return; // Prevent overlapping
-        isPlaying = true;
+    function playMusicCollection(collectionName, loop = false) {
+        if (!musicCollections[collectionName]) {
+            console.warn(`Music collection '${collectionName}' not found`);
+            return;
+        }
+        if (isPlaying[collectionName]) return; // Prevent overlapping
+        isPlaying[collectionName] = true;
 
+        const collection = musicCollections[collectionName];
         let time = 0;
         collection.forEach(note => {
             setTimeout(() => playNote(note), time * 1000);
             time += note.duration;
         });
 
-        // Loop the music after a delay (e.g., 2.6 seconds total + 1-second pause)
-        setTimeout(() => {
-            isPlaying = false;
-            playMusicCollection(collection); // Restart the music
-        }, time * 1000 + 1000);
+        if (loop) {
+            // Loop the music after a delay (total duration + 1-second pause)
+            setTimeout(() => {
+                isPlaying[collectionName] = false;
+                playMusicCollection(collectionName, loop);
+            }, time * 1000 + 1000);
+        } else {
+            // Allow replay after non-looping music finishes
+            setTimeout(() => {
+                isPlaying[collectionName] = false;
+            }, time * 1000);
+        }
     }
 
-    // Start music on user interaction (e.g., keypress) to comply with browser policies
+    // Start music on user interaction (e.g., keypress) for adventure theme
     window.addEventListener('keydown', () => {
-        if (!isPlaying) playMusicCollection(adventureMusicCollection);
+        if (!isPlaying['adventure']) playMusicCollection('adventure', true); // Loop adventure music
     }, { once: true });
 
+    // Expose methods for game integration
     return {
-        playMusicCollection, // Expose for manual control if needed
-        Note,               // Expose Note object for creating custom collections
-        adventureMusicCollection // Expose the default collection for reference
+        playMusicCollection, // Play any collection (e.g., 'victory', 'adventure')
+        Note,               // Create custom notes for new collections
+        addMusicCollection: function(name, collection) {
+            musicCollections[name] = collection;
+            console.log(`Added new music collection: ${name}`);
+        } // Scalable method to add new collections
     };
 })();
