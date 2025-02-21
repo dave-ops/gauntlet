@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>8x16 Pixel Grid (25x25 Cells, Clickable, with Clear Button)</title>
+    <title>8x16 Pixel Grid (25x25 Cells, Clickable, with Clear Button, Saved State)</title>
     <style>
         body {
             display: flex;
@@ -51,7 +51,7 @@
         const ctx = canvas.getContext('2d');
 
         // Set canvas size (8x16 grid, each cell is 25x25 pixels, with a 1px black border)
-        const cellSize = 25; // Size of each grid cell in pixels
+        const cellSize = 30; // Size of each grid cell in pixels
         const gridWidth = 9; // 8 cells wide
         const gridHeight = 17; // 16 cells tall
         const borderSize = 1; // Black border size in pixels
@@ -61,7 +61,13 @@
         canvas.height = (gridHeight * cellSize) + (2 * borderSize); // 400 + 2 = 402 pixels tall
 
         // Initialize a 2D array to track cell colors (true = white, false = dark gray)
-        let gridColors = Array(gridHeight).fill().map(() => Array(gridWidth).fill(true)); // Start with all white (true)
+        let gridColors = Array(gridHeight).fill().map(() => Array(gridWidth).fill(true)); // Default to all white (true)
+
+        // Load state from localStorage if it exists
+        const savedState = localStorage.getItem('gridColors');
+        if (savedState) {
+            gridColors = JSON.parse(savedState);
+        }
 
         // Draw the grid
         function drawGrid() {
@@ -101,6 +107,11 @@
             }
         }
 
+        // Save state to localStorage
+        function saveState() {
+            localStorage.setItem('gridColors', JSON.stringify(gridColors));
+        }
+
         // Handle canvas clicks
         canvas.addEventListener('click', (event) => {
             // Get the click position relative to the canvas
@@ -117,6 +128,7 @@
                 // Toggle the color (true -> false, false -> true)
                 gridColors[cellY][cellX] = !gridColors[cellY][cellX];
                 drawGrid(); // Redraw the grid with the updated color
+                saveState(); // Save the updated state to localStorage
             }
         });
 
@@ -125,6 +137,7 @@
             // Reset all cells to white (true)
             gridColors = Array(gridHeight).fill().map(() => Array(gridWidth).fill(true));
             drawGrid(); // Redraw the grid with all white cells
+            saveState(); // Save the cleared state to localStorage
         });
 
         // Initial draw
