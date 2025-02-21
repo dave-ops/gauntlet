@@ -48,8 +48,20 @@ function updatePosition() {
         player.legAngle = Math.sin(player.legAngle) * 0.1;
     }
 
+    updateMonsters();
     checkCollisions();
     checkMonsterCollisions();
+}
+
+function updateMonsters() {
+    monsters.forEach(monster => {
+        if (!monster.defeated && monster.type === 'kobold') {
+            // Patrol between x bounds (e.g., 325 to 375)
+            monster.x += monster.speed * monster.direction;
+            if (monster.x <= 325) monster.direction = 1; // Move right
+            if (monster.x >= 375) monster.direction = -1; // Move left
+        }
+    });
 }
 
 function checkCollisions() {
@@ -88,7 +100,7 @@ function checkMonsterCollisions() {
                 playerBounds.bottom > monsterBounds.top &&
                 playerBounds.top < monsterBounds.bottom
             ) {
-                monster.defeated = true; // Defeat on contact (expandable to combat)
+                monster.defeated = true;
             }
         }
     });

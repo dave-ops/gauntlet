@@ -4,7 +4,7 @@ const items = [
 ];
 
 const monsters = [
-    { type: 'kobold', x: 350, y: 300, defeated: false }
+    { type: 'kobold', x: 350, y: 300, defeated: false, speed: 1, direction: 1 }
 ];
 
 function drawArmorItem(ctx, x, y) {
@@ -48,17 +48,15 @@ function drawSword(ctx, x, y, angle) {
 }
 
 function drawKobold(ctx, x, y) {
-    // Head (small oval)
     ctx.beginPath();
     ctx.ellipse(x, y - 10, 8, 10, 0, 0, Math.PI * 2);
-    ctx.fillStyle = '#8B4513'; // Brown skin
+    ctx.fillStyle = '#8B4513';
     ctx.fill();
     ctx.strokeStyle = '#000000';
     ctx.lineWidth = 1;
     ctx.stroke();
     ctx.closePath();
 
-    // Body
     ctx.beginPath();
     ctx.moveTo(x, y);
     ctx.lineTo(x, y + 20);
@@ -67,7 +65,6 @@ function drawKobold(ctx, x, y) {
     ctx.stroke();
     ctx.closePath();
 
-    // Arms
     ctx.beginPath();
     ctx.moveTo(x - 10, y + 5);
     ctx.lineTo(x + 10, y + 5);
@@ -75,7 +72,6 @@ function drawKobold(ctx, x, y) {
     ctx.stroke();
     ctx.closePath();
 
-    // Legs
     ctx.beginPath();
     ctx.moveTo(x, y + 20);
     ctx.lineTo(x - 8, y + 35);
@@ -85,7 +81,6 @@ function drawKobold(ctx, x, y) {
     ctx.stroke();
     ctx.closePath();
 
-    // Tail
     ctx.beginPath();
     ctx.moveTo(x, y + 20);
     ctx.lineTo(x - 15, y + 30);
@@ -93,7 +88,6 @@ function drawKobold(ctx, x, y) {
     ctx.stroke();
     ctx.closePath();
 
-    // Spear
     ctx.beginPath();
     ctx.moveTo(x + 10, y + 5);
     ctx.lineTo(x + 20, y - 10);
