@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>8x16 Pixel Grid (25x25 Cells, Clickable, with Clear/Export, Saved State)</title>
+    <title>8x16 Pixel Grid (25x25 Cells, Clickable, with Clear/Export/Import, Saved State)</title>
     <style>
         body {
             display: flex;
@@ -49,15 +49,23 @@
             resize: vertical; /* Allow vertical resizing */
             margin-top: 10px; /* Space above textarea */
         }
+        #importError {
+            color: red;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none; /* Hidden by default */
+        }
     </style>
 </head>
 <body>
     <canvas id="pixelGrid"></canvas>
     <div class="button-bar">
         <button id="clearButton">Clear</button>
-        <button id="exportJsonButton">Export JSON</button>
+        <button id="exportJsonButton">Export</button>
+        <button id="importJsonButton">Save</button>
     </div>
-    <textarea id="jsonOutput" readonly placeholder="Click 'Export JSON' to see the grid state..."></textarea>
+    <textarea id="jsonOutput" placeholder="Enter or paste JSON here, then click 'Import JSON'..."></textarea>
+    <div id="importError"></div>
 
     <script>
         // Get the canvas and context
@@ -65,9 +73,9 @@
         const ctx = canvas.getContext('2d');
 
         // Set canvas size (8x16 grid, each cell is 25x25 pixels, with a 1px black border)
-        const cellSize = 25; // Size of each grid cell in pixels
-        const gridWidth = 8; // 8 cells wide
-        const gridHeight = 16; // 16 cells tall
+        const cellSize = 20; // Size of each grid cell in pixels
+        const gridWidth = 17; // 8 cells wide
+        const gridHeight = 33; // 16 cells tall
         const borderSize = 1; // Black border size in pixels
 
         // Total canvas size includes the border
@@ -80,7 +88,16 @@
         // Load state from localStorage if it exists
         const savedState = localStorage.getItem('gridColors');
         if (savedState) {
-            gridColors = JSON.parse(savedState);
+            try {
+                gridColors = JSON.parse(savedState);
+                // Ensure the loaded grid matches the expected dimensions
+                if (!Array.isArray(gridColors) || gridColors.length !== gridHeight || !gridColors.every(row => Array.isArray(row) && row.length === gridWidth)) {
+                    throw new Error('Invalid grid format');
+                }
+            } catch (e) {
+                console.error('Error loading saved state:', e);
+                gridColors = Array(gridHeight).fill().map(() => Array(gridWidth).fill(true)); // Reset to default
+            }
         }
 
         // Draw the grid
@@ -159,6 +176,33 @@
             // Convert gridColors to a human-readable JSON string
             const jsonOutput = JSON.stringify(gridColors, null, 2); // Pretty print with 2 spaces indentation
             document.getElementById('jsonOutput').value = jsonOutput;
+        });
+
+        // Handle import JSON button click
+        document.getElementById('importJsonButton').addEventListener('click', () => {
+            const jsonInput = document.getElementById('jsonOutput').value; // Fixed typo: getElementById, not getElementId
+            try {
+                const importedGrid = JSON.parse(jsonInput);
+
+                // Validate the imported JSON matches the expected grid dimensions (8x16)
+                if (!Array.isArray(importedGrid) || importedGrid.length !== gridHeight || !importedGrid.every(row => Array.isArray(row) && row.length === gridWidth)) {
+                    throw new Error('Invalid JSON format: Must be an 8x16 array of booleans');
+                }
+
+                // Ensure all values are booleans (true/false)
+                if (!importedGrid.every(row => row.every(val => typeof val === 'boolean'))) {
+                    throw new Error('Invalid JSON format: Values must be booleans (true/false)');
+                }
+
+                // Update gridColors with the imported data
+                gridColors = importedGrid;
+                drawGrid(); // Redraw the grid with the imported state
+                saveState(); // Save the imported state to localStorage
+                document.getElementById('importError').style.display = 'none'; // Hide any error message
+            } catch (e) {
+                document.getElementById('importError').textContent = `Error: ${e.message}`;
+                document.getElementById('importError').style.display = 'block'; // Show error message
+            }
         });
 
         // Initial draw
