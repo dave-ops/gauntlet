@@ -1,23 +1,35 @@
-const GameLogic = (function() {
-    function update() {
-        updatePosition();
-        updateMonsters();
-        checkCollisions();
-        checkMonsterCollisions();
-    }
+// Remove closure, make GameLogic global
+const GameLogic = {
+    update: function() {
+        console.log('GameLogic update called');
 
-    function updatePosition() {
+        this.updatePosition();
+        this.updateMonsters();
+        this.checkCollisions();
+        this.checkMonsterCollisions();
+    },
+
+    updatePosition: function() {
+        console.log('Updating player position');
+
         Player.isMoving = false;
         if (Input.isKeyDown('ArrowUp')) { World.updateOffset(0, -3); Player.isMoving = true; }
         if (Input.isKeyDown('ArrowDown')) { World.updateOffset(0, 3); Player.isMoving = true; }
         if (Input.isKeyDown('ArrowLeft')) { World.updateOffset(-3, 0); Player.isMoving = true; }
         if (Input.isKeyDown('ArrowRight')) { World.updateOffset(3, 0); Player.isMoving = true; }
+        console.log('Player movement state:', Player.isMoving);
+
         if (Player.isMoving) Player.legAngle += 0.2;
         else Player.legAngle = Math.sin(Player.legAngle) * 0.1;
-        AudioManager.playStepSound();
-    }
+        console.log('Player leg angle updated:', Player.legAngle);
 
-    function updateMonsters() {
+        AudioManager.playStepSound();
+        console.log('Step sound played (if moving)');
+    },
+
+    updateMonsters: function() {
+        console.log('Updating monsters');
+
         Monsters.forEach(monster => {
             if (!monster.defeated && monster.type === 'kobold') {
                 monster.x += monster.speed * monster.direction;
@@ -25,44 +37,60 @@ const GameLogic = (function() {
                 if (monster.x >= 375) monster.direction = -1;
             }
         });
-    }
+        console.log('Monsters updated, kobold x:', Monsters[0].x);
+    },
 
-    function checkCollisions() {
+    checkCollisions: function() {
+        console.log('Checking item collisions');
+
         const playerBounds = { left: Player.x - 15, right: Player.x + 15, top: Player.y - 10, bottom: Player.y + 60 };
         const offset = World.getOffset();
+        console.log('Player bounds:', playerBounds, 'World offset:', offset);
+
         Items.forEach(item => {
             if (!item.collected) {
                 const screenX = item.x - offset.x, screenY = item.y - offset.y;
                 const itemBounds = item.getBounds(screenX, screenY);
+                console.log('Checking item:', item.type, 'at', { screenX, screenY }, 'Bounds:', itemBounds);
                 if (playerBounds.right > itemBounds.left && playerBounds.left < itemBounds.right &&
                     playerBounds.bottom > itemBounds.top && playerBounds.top < itemBounds.bottom) {
+                    console.log('Collision detected with item:', item.type);
                     if ((item.type === 'armor' && Math.abs(item.x - (Player.x + offset.x)) < 50) || 
                         (item.type === 'sword' && Math.abs(item.x - (Player.x + offset.x)) < 50)) {
                         item.collected = true;
                         if (item.type === 'armor') Player.hasArmor = true;
                         if (item.type === 'sword') Player.hasSword = true;
+                        console.log('Item collected:', item.type);
                     }
                 }
             }
         });
-    }
+    },
 
-    function checkMonsterCollisions() {
+    checkMonsterCollisions: function() {
+        console.log('Checking monster collisions');
+
         const playerBounds = { left: Player.x - 15, right: Player.x + 15, top: Player.y - 10, bottom: Player.y + 60 };
         const offset = World.getOffset();
+        console.log('Player bounds:', playerBounds, 'World offset:', offset);
+
         Monsters.forEach(monster => {
             if (!monster.defeated) {
                 const screenX = monster.x - offset.x, screenY = monster.y - offset.y;
                 const monsterBounds = monster.getBounds(screenX, screenY);
+                console.log('Checking monster:', monster.type, 'at', { screenX, screenY }, 'Bounds:', monsterBounds);
                 if (playerBounds.right > monsterBounds.left && playerBounds.left < monsterBounds.right &&
                     playerBounds.bottom > monsterBounds.top && playerBounds.top < monsterBounds.bottom) {
+                    console.log('Collision detected with monster:', monster.type);
                     monster.defeated = true;
                 }
             }
         });
-    }
+    },
 
-    function verifyState() {
+    verifyState: function() {
+        console.log('Verifying game state');
+
         const state = `${Player.hasArmor}-${Player.hasSword}-${Monsters[0].defeated}`;
         const hash = btoa(state);
         if (sessionStorage.getItem('gameState') && sessionStorage.getItem('gameState') !== hash) {
@@ -70,8 +98,7 @@ const GameLogic = (function() {
             return false;
         }
         sessionStorage.setItem('gameState', hash);
+        console.log('State verified, hash:', hash);
         return true;
     }
-
-    return { update, verifyState };
-})();
+};

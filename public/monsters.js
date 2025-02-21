@@ -1,9 +1,9 @@
 const Monsters = (function() {
-    console.log('Monsters module loaded');
+    console.log('Monsters module loaded');    
     let monsters = [
         { type: 'kobold', x: 350, y: 300, defeated: false, speed: 1, direction: 1 }
     ];
-    return monsters.map(monster => ({
+    const result = monsters.map(monster => ({
         type: monster.type,
         get x() { return monster.x; },
         set x(v) { monster.x = v; },
@@ -15,6 +15,8 @@ const Monsters = (function() {
         set direction(v) { monster.direction = v; },
         getBounds: (screenX, screenY) => ({ left: screenX - 15, right: screenX + 20, top: screenY - 20, bottom: screenY + 35 })
     }));
+    console.log({ result });
+    return result;
 })();
 
 function drawKobold(ctx, x, y) {
