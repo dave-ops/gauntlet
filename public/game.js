@@ -85,7 +85,7 @@ function upd() {
 }
 
 function updM() {
-    monsters.forEach(m => {
+    Monsters.forEach(m => {
         if (!m.d && m.t === 'k') {
             m.x += m.s * m.dn;
             if (m.x <= 325) m.dn = 1;
@@ -98,7 +98,7 @@ function chkC() {
     const pB = { l: Player.x - 15, r: Player.x + 15, t: Player.y - 10, b: Player.y + 60 };
     const o = gameCore.gO();
 
-    items.forEach(i => {
+    Items.forEach(i => {
         if (!i.c) {
             const sx = i.x - o.x, sy = i.y - o.y;
             const iB = i.gB(sx, sy);
@@ -118,7 +118,7 @@ function chkMC() {
     const pB = { l: Player.x - 15, r: Player.x + 15, t: Player.y - 10, b: Player.y + 60 };
     const o = gameCore.gO();
 
-    monsters.forEach(m => {
+    Monsters.forEach(m => {
         if (!m.d) {
             const sx = m.x - o.x, sy = m.y - o.y;
             const mB = m.gB(sx, sy);
@@ -130,7 +130,7 @@ function chkMC() {
 }
 
 function anim() {
-    if (!gameCore.vS(Player, items, monsters)) return; // Stop if tampered
+    if (!gameCore.vS(Player, Items, Monsters)) return; // Stop if tampered
 
     const b = gameCore.gB(Player.x, Player.y);
     ctx.fillStyle = b.c;

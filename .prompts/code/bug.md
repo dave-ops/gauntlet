@@ -1,1 +1,3 @@
-just resolve this error.  dont get into other files unless they need changing
+hmmm.  it's still not working.
+here is the current code.  please fix this error
+
