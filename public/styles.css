@@ -1,3 +1,23 @@
-canvas {
-    border: 1px solid black;
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start; /* Changed to align content to the top */
+    min-height: 100vh; /* Maintain full viewport height */
+    text-align: center;
+}
+
+.game-title {
+    margin-bottom: 20px;
+}
+
+#myCanvas {
+    border: 1px solid black; /* Optional: makes canvas visible */
+    width: 800px; /* Increased size */
+    height: 600px; /* Increased size */
+}
+
+.instructions {
+    margin-top: 20px;
+    font-family: Arial, sans-serif;
 }
