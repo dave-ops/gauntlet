@@ -1,57 +1,23 @@
-body, html {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    overflow: auto; /* Allow scrolling if content exceeds viewport */
-    background-color: #f0f0f0; /* Light gray background for contrast */
-    font-family: Arial, sans-serif;
-}
-
 .container {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    min-height: 100vh; /* Ensure container takes full height */
-    padding: 20px;
+    justify-content: flex-start; /* Changed to align content to the top */
+    min-height: 100vh; /* Maintain full viewport height */
+    text-align: center;
 }
 
 .game-title {
-    font-size: 2.5em; /* Large, readable title */
-    color: #333;
     margin-bottom: 20px;
-    text-align: center;
 }
 
 #myCanvas {
-    width: 800px; /* Optimal size for performance */
-    height: 800px; /* Optimal size for performance */
-    display: block; /* Ensure no extra margin */
-    border: 1px solid black;
-    margin: 0 auto; /* Center horizontally */
+    border: 1px solid black; /* Optional: makes canvas visible */
+    width: 800px; /* Increased size */
+    height: 600px; /* Increased size */
 }
 
 .instructions {
-    font-size: 1.1em; /* Readable instructions */
-    color: #666;
-    text-align: center;
     margin-top: 20px;
-    max-width: 800px; /* Match canvas width for alignment */
-    line-height: 1.5;
-}
-
-@media (max-width: 800px) {
-    #myCanvas {
-        width: 100%; /* Scale down on smaller screens, maintaining aspect ratio */
-        height: auto;
-    }
-
-    .game-title {
-        font-size: 2em; /* Smaller title on mobile */
-    }
-
-    .instructions {
-        font-size: 1em; /* Smaller instructions on mobile */
-        max-width: 90%; /* Adjust width for smaller screens */
-    }
+    font-family: Arial, sans-serif;
 }
