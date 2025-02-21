@@ -16,10 +16,10 @@ const GameLogic = {
         console.log('Updating player position');
 
         Player.isMoving = false;
-        if (Input.isKeyDown('ArrowUp')) { World.updateOffset(0, -3 * 0.5); Player.isMoving = true; } // Scale movement by 50%
-        if (Input.isKeyDown('ArrowDown')) { World.updateOffset(0, 3 * 0.5); Player.isMoving = true; } // Scale movement by 50%
-        if (Input.isKeyDown('ArrowLeft')) { World.updateOffset(-3 * 0.5, 0); Player.isMoving = true; } // Scale movement by 50%
-        if (Input.isKeyDown('ArrowRight')) { World.updateOffset(3 * 0.5, 0); Player.isMoving = true; } // Scale movement by 50%
+        if (Input.isKeyDown('ArrowUp')) { World.updateOffset(0, -3); Player.isMoving = true; }
+        if (Input.isKeyDown('ArrowDown')) { World.updateOffset(0, 3); Player.isMoving = true; }
+        if (Input.isKeyDown('ArrowLeft')) { World.updateOffset(-3, 0); Player.isMoving = true; }
+        if (Input.isKeyDown('ArrowRight')) { World.updateOffset(3, 0); Player.isMoving = true; }
         console.log('Player movement state:', Player.isMoving);
 
         if (Player.isMoving) Player.legAngle += 0.2;
@@ -35,9 +35,9 @@ const GameLogic = {
 
         Monsters.forEach(monster => {
             if (!monster.defeated && monster.type === 'kobold') {
-                monster.x += monster.speed * monster.direction * 0.5; // Scale movement by 50%
-                if (monster.x <= 325 * 0.5) monster.direction = 1; // Scale kobold bounds by 50%
-                if (monster.x >= 375 * 0.5) monster.direction = -1; // Scale kobold bounds by 50%
+                monster.x += monster.speed * monster.direction;
+                if (monster.x <= KOBOLD_BOUNDS_MIN) monster.direction = 1;
+                if (monster.x >= KOBOLD_BOUNDS_MAX) monster.direction = -1;
             }
         });
         console.log('Monsters updated, kobold x:', Monsters[0].x);
@@ -47,22 +47,22 @@ const GameLogic = {
         console.log('Checking item collisions');
 
         const playerBounds = { 
-            left: Player.x - 15 * 0.5, right: Player.x + 15 * 0.5, 
-            top: Player.y - 10 * 0.5, bottom: Player.y + 60 * 0.5 
-        }; // Scale player bounds by 50%
+            left: Player.x - PLAYER_WIDTH / 2, right: Player.x + PLAYER_WIDTH / 2, 
+            top: Player.y - PLAYER_HEIGHT / 10, bottom: Player.y + PLAYER_HEIGHT * 0.85 
+        };
         const offset = World.getOffset();
         console.log('Player bounds:', playerBounds, 'World offset:', offset);
 
         Items.forEach(item => {
             if (!item.collected) {
-                const screenX = (item.x - offset.x) * 0.5, screenY = (item.y - offset.y) * 0.5; // Scale item positions by 50%
+                const screenX = item.x - offset.x, screenY = item.y - offset.y;
                 const itemBounds = item.getBounds(screenX, screenY);
                 console.log('Checking item:', item.type, 'at', { screenX, screenY }, 'Bounds:', itemBounds);
                 if (playerBounds.right > itemBounds.left && playerBounds.left < itemBounds.right &&
                     playerBounds.bottom > itemBounds.top && playerBounds.top < itemBounds.bottom) {
                     console.log('Collision detected with item:', item.type, 'before collection');
-                    if ((item.type === 'armor' && Math.abs(item.x - (Player.x + offset.x)) < 50 * 0.5) || 
-                        (item.type === 'sword' && Math.abs(item.x - (Player.x + offset.x)) < 50 * 0.5)) { // Scale proximity by 50%
+                    if ((item.type === 'armor' && Math.abs(item.x - (Player.x + offset.x)) < ITEM_PROXIMITY) || 
+                        (item.type === 'sword' && Math.abs(item.x - (Player.x + offset.x)) < ITEM_PROXIMITY)) {
                         item.collected = true;
                         if (item.type === 'armor') {
                             console.log('Attempting to set Player.hasArmor to true');
@@ -86,15 +86,15 @@ const GameLogic = {
         console.log('Checking monster collisions');
 
         const playerBounds = { 
-            left: Player.x - 15 * 0.5, right: Player.x + 15 * 0.5, 
-            top: Player.y - 10 * 0.5, bottom: Player.y + 60 * 0.5 
-        }; // Scale player bounds by 50%
+            left: Player.x - PLAYER_WIDTH / 2, right: Player.x + PLAYER_WIDTH / 2, 
+            top: Player.y - PLAYER_HEIGHT / 10, bottom: Player.y + PLAYER_HEIGHT * 0.85 
+        };
         const offset = World.getOffset();
         console.log('Player bounds:', playerBounds, 'World offset:', offset);
 
         Monsters.forEach(monster => {
             if (!monster.defeated && this.gameState === 'playing') {
-                const screenX = (monster.x - offset.x) * 0.5, screenY = (monster.y - offset.y) * 0.5; // Scale monster positions by 50%
+                const screenX = monster.x - offset.x, screenY = monster.y - offset.y;
                 const monsterBounds = monster.getBounds(screenX, screenY);
                 console.log('Checking monster:', monster.type, 'at', { screenX, screenY }, 'Bounds:', monsterBounds);
                 if (playerBounds.right > monsterBounds.left && playerBounds.left < monsterBounds.right &&
