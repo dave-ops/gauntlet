@@ -1,4 +1,5 @@
 const Monsters = (function() {
+    console.log('Monsters module loaded');
     let monsters = [
         { type: 'kobold', x: 350, y: 300, defeated: false, speed: 1, direction: 1 }
     ];

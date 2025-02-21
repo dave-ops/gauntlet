@@ -1,4 +1,5 @@
 const Items = (function() {
+    console.log('Items module loaded');
     let items = [
         { type: 'armor', x: 300, y: 100, collected: false },
         { type: 'sword', x: 450, y: 200, collected: false }

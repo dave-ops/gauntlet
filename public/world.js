@@ -1,4 +1,5 @@
 const World = (function() {
+    console.log('World module loaded');
     let offsetX = 0, offsetY = 0;
     const specks = [];
     for (let i = 0; i < 200; i++) {

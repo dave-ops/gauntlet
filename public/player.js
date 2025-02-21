@@ -1,4 +1,5 @@
 const Player = (function() {
+    console.log('Player module loaded');
     let state = { x: 200, y: 200, legAngle: 0, isMoving: false, hasArmor: false, hasSword: false };
     return {
         x: state.x,
