@@ -3,17 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <title>Centered Player with Moving World</title>
-    <style>
-        canvas {
-            border: 1px solid black;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <canvas id="myCanvas" width="400" height="400"></canvas>
+    <script src="input.js"></script>
+    <script src="audio.js"></script>
+    <script src="biome.js"></script>
+    <script src="world.js"></script>
     <script src="player.js"></script>
     <script src="items.js"></script>
-    <script src="render.js"></script>
+    <script src="monsters.js"></script> <!-- Add this line -->
+    <script src="entityRenderer.js"></script>
+    <script src="gameLogic.js"></script>
+    <script src="gameLoop.js"></script>
     <script src="game.js"></script>
 </body>
 </html>

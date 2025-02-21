@@ -138,7 +138,7 @@ function anim() {
 
     upd();
     const o = gameCore.gO();
-    r(ctx, o.x, o.y, gameCore.gS());
+    entityRenderer.render(ctx, o.x, o.y, gameCore.gS());
     requestAnimationFrame(anim);
 }
 
