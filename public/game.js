@@ -1,11 +1,15 @@
 const canvas = document.getElementById('myCanvas');
 const ctx = canvas.getContext('2d');
 
+console.log('Game initialization started');
+
 const gameCore = (function() {
     const spd = 3;
     let wX = 0, wY = 0; // World offset
     const aud = new (window.AudioContext || window.webkitAudioContext)();
     let lstStp = 0, stpCd = 200;
+
+    console.log('GameCore initialized');
 
     // Speck generation
     const spks = [];
@@ -59,5 +63,7 @@ const gameCore = (function() {
     };
 })();
 
-// Load and start the game loop with ctx
+console.log('Starting game loop with ctx:', ctx);
+
+// Start the game loop with ctx
 startGameLoop(ctx);
