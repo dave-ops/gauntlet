@@ -7,13 +7,13 @@ const GameLogic = (function() {
     }
 
     function updatePosition() {
-        player.isMoving = false;
-        if (Input.isKeyDown('ArrowUp')) { World.updateOffset(0, -3); player.isMoving = true; }
-        if (Input.isKeyDown('ArrowDown')) { World.updateOffset(0, 3); player.isMoving = true; }
-        if (Input.isKeyDown('ArrowLeft')) { World.updateOffset(-3, 0); player.isMoving = true; }
-        if (Input.isKeyDown('ArrowRight')) { World.updateOffset(3, 0); player.isMoving = true; }
-        if (player.isMoving) player.legAngle += 0.2;
-        else player.legAngle = Math.sin(player.legAngle) * 0.1;
+        Player.isMoving = false;
+        if (Input.isKeyDown('ArrowUp')) { World.updateOffset(0, -3); Player.isMoving = true; }
+        if (Input.isKeyDown('ArrowDown')) { World.updateOffset(0, 3); Player.isMoving = true; }
+        if (Input.isKeyDown('ArrowLeft')) { World.updateOffset(-3, 0); Player.isMoving = true; }
+        if (Input.isKeyDown('ArrowRight')) { World.updateOffset(3, 0); Player.isMoving = true; }
+        if (Player.isMoving) Player.legAngle += 0.2;
+        else Player.legAngle = Math.sin(Player.legAngle) * 0.1;
         AudioManager.playStepSound();
     }
 
@@ -28,7 +28,7 @@ const GameLogic = (function() {
     }
 
     function checkCollisions() {
-        const playerBounds = { left: player.x - 15, right: player.x + 15, top: player.y - 10, bottom: player.y + 60 };
+        const playerBounds = { left: Player.x - 15, right: Player.x + 15, top: Player.y - 10, bottom: Player.y + 60 };
         const offset = World.getOffset();
         Items.forEach(item => {
             if (!item.collected) {
@@ -36,11 +36,11 @@ const GameLogic = (function() {
                 const itemBounds = item.getBounds(screenX, screenY);
                 if (playerBounds.right > itemBounds.left && playerBounds.left < itemBounds.right &&
                     playerBounds.bottom > itemBounds.top && playerBounds.top < itemBounds.bottom) {
-                    if ((item.type === 'armor' && Math.abs(item.x - (player.x + offset.x)) < 50) || 
-                        (item.type === 'sword' && Math.abs(item.x - (player.x + offset.x)) < 50)) {
+                    if ((item.type === 'armor' && Math.abs(item.x - (Player.x + offset.x)) < 50) || 
+                        (item.type === 'sword' && Math.abs(item.x - (Player.x + offset.x)) < 50)) {
                         item.collected = true;
-                        if (item.type === 'armor') player.hasArmor = true;
-                        if (item.type === 'sword') player.hasSword = true;
+                        if (item.type === 'armor') Player.hasArmor = true;
+                        if (item.type === 'sword') Player.hasSword = true;
                     }
                 }
             }
@@ -48,7 +48,7 @@ const GameLogic = (function() {
     }
 
     function checkMonsterCollisions() {
-        const playerBounds = { left: player.x - 15, right: player.x + 15, top: player.y - 10, bottom: player.y + 60 };
+        const playerBounds = { left: Player.x - 15, right: Player.x + 15, top: Player.y - 10, bottom: Player.y + 60 };
         const offset = World.getOffset();
         Monsters.forEach(monster => {
             if (!monster.defeated) {
@@ -63,7 +63,7 @@ const GameLogic = (function() {
     }
 
     function verifyState() {
-        const state = `${player.hasArmor}-${player.hasSword}-${Monsters[0].defeated}`;
+        const state = `${Player.hasArmor}-${Player.hasSword}-${Monsters[0].defeated}`;
         const hash = btoa(state);
         if (sessionStorage.getItem('gameState') && sessionStorage.getItem('gameState') !== hash) {
             console.warn('State tampered! Resetting...');

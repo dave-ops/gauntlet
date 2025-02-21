@@ -1,4 +1,4 @@
-function startGameLoop(ctx) { // Accept ctx as a parameter
+function startGameLoop(ctx) {
     function loop() {
         if (!GameLogic.verifyState()) return;
         const biome = Biome.getBiome(Player.x, Player.y);

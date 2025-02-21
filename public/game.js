@@ -36,10 +36,9 @@ const gameCore = (function() {
         return { n: 'g', c: '#32CD32' };
     }
 
-    // Integrity check, updated to use module names
+    // Integrity check
     function verifyState(p, i, m) {
-        // Use getters to access state safely
-        const state = `${p.hasArmor}-${p.hasSword}-${m[0].defeated}`;
+        const state = `${p.hA}-${p.hS}-${m[0].d}`;
         const hash = btoa(state);
         if (sessionStorage.getItem('gs') && sessionStorage.getItem('gs') !== hash) {
             console.warn('State tampered! Resetting...');
@@ -60,5 +59,5 @@ const gameCore = (function() {
     };
 })();
 
-// Load and start the game loop
-startGameLoop(ctx); // Call startGameLoop with ctx
+// Load and start the game loop with ctx
+startGameLoop(ctx);
