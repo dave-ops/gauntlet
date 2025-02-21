@@ -49,6 +49,7 @@ function updatePosition() {
     }
 
     checkCollisions();
+    checkMonsterCollisions();
 }
 
 function checkCollisions() {
@@ -68,6 +69,26 @@ function checkCollisions() {
                 item.collected = true;
                 if (item.type === 'armor') player.hasArmor = true;
                 if (item.type === 'sword') player.hasSword = true;
+            }
+        }
+    });
+}
+
+function checkMonsterCollisions() {
+    const playerBounds = { left: player.x - 15, right: player.x + 15, top: player.y - 10, bottom: player.y + 60 };
+
+    monsters.forEach(monster => {
+        if (!monster.defeated) {
+            const monsterScreenX = monster.x - worldOffsetX;
+            const monsterScreenY = monster.y - worldOffsetY;
+            const monsterBounds = monster.getBounds(monsterScreenX, monsterScreenY);
+            if (
+                playerBounds.right > monsterBounds.left &&
+                playerBounds.left < monsterBounds.right &&
+                playerBounds.bottom > monsterBounds.top &&
+                playerBounds.top < monsterBounds.bottom
+            ) {
+                monster.defeated = true; // Defeat on contact (expandable to combat)
             }
         }
     });

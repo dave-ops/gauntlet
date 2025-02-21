@@ -12,6 +12,17 @@ function render(ctx, worldOffsetX, worldOffsetY) {
         }
     });
 
+    // Draw monsters
+    monsters.forEach(monster => {
+        if (!monster.defeated) {
+            const screenX = monster.x - worldOffsetX;
+            const screenY = monster.y - worldOffsetY;
+            if (monster.type === 'kobold') {
+                drawKobold(ctx, screenX, screenY);
+            }
+        }
+    });
+
     // Draw player
     if (player.hasArmor) {
         drawArmorSprite(ctx, player.x, player.y);
