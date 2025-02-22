@@ -1,0 +1,23 @@
+{
+  "name": "gauntlet",
+  "version": "1.0.0",
+  "description": "```\r public/\r ├── index.html\r ├── styles.css\r ├── input.js\r ├── audio.js\r ├── biome.js\r ├── world.js\r ├── player.js\r ├── items.js\r ├── monsters.js\r ├── entityRenderer.js\r ├── gameLogic.js\r ├── gameLoop.js\r ```",
+  "homepage": "https://github.com/dave-ops/gauntlet#readme",
+  "bugs": {
+    "url": "https://github.com/dave-ops/gauntlet/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dave-ops/gauntlet.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
